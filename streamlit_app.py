@@ -1,12 +1,60 @@
 import streamlit as st
+import os
 
 from app import run_workflow
+from vectorstore.create_db import create_vector_db
 
 st.set_page_config(
     page_title="Multi-Agent AI Research System",
     page_icon="🤖",
     layout="wide"
 )
+
+# =====================================
+# SIDEBAR
+# =====================================
+
+st.sidebar.title("📂 PDF Management")
+
+uploaded_files = st.sidebar.file_uploader(
+    "Upload PDF Files",
+    type=["pdf"],
+    accept_multiple_files=True
+)
+
+if st.sidebar.button("Create Vector Database"):
+
+    if uploaded_files:
+
+        os.makedirs("documents/pdfs", exist_ok=True)
+
+        for file in uploaded_files:
+
+            save_path = os.path.join(
+                "documents/pdfs",
+                file.name
+            )
+
+            with open(save_path, "wb") as f:
+                f.write(file.getbuffer())
+
+        with st.spinner("Creating FAISS Database..."):
+
+            create_vector_db()
+
+        st.sidebar.success(
+            "✅ Vector Database Created Successfully"
+        )
+
+    else:
+
+        st.sidebar.warning(
+            "⚠️ Upload at least one PDF"
+        )
+
+# =====================================
+# MAIN UI
+# =====================================
 
 st.title("🤖 Multi-Agent AI Research System")
 
@@ -29,6 +77,13 @@ if st.button("Generate Report"):
         st.success("✅ Report Generated Successfully")
 
         st.markdown(result["report"])
+
+        st.download_button(
+            label="📥 Download Report",
+            data=result["report"],
+            file_name="research_report.txt",
+            mime="text/plain"
+        )
 
     else:
 
