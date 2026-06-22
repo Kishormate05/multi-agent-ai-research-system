@@ -11,6 +11,13 @@ st.set_page_config(
 )
 
 # =====================================
+# SESSION STATE
+# =====================================
+
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# =====================================
 # SIDEBAR
 # =====================================
 
@@ -53,6 +60,19 @@ if st.sidebar.button("Create Vector Database"):
         )
 
 # =====================================
+# HISTORY
+# =====================================
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("🕒 Chat History")
+
+for item in reversed(st.session_state.history):
+
+    st.sidebar.write(
+        f"• {item['query']}"
+    )
+
+# =====================================
 # MAIN UI
 # =====================================
 
@@ -78,6 +98,13 @@ if st.button("Generate Report"):
 
         st.markdown(result["report"])
 
+        st.session_state.history.append(
+            {
+                "query": query,
+                "report": result["report"]
+            }
+        )
+
         st.download_button(
             label="📥 Download Report",
             data=result["report"],
@@ -87,4 +114,4 @@ if st.button("Generate Report"):
 
     else:
 
-        st.warning("⚠️ Please enter a query")
+        st.warning("⚠️ Please enter your query")
