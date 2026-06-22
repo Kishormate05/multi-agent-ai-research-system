@@ -4,6 +4,7 @@ import time
 
 from app import run_workflow
 from vectorstore.create_db import create_vector_db
+from utils.pdf_generator import create_pdf_report
 
 st.set_page_config(
     page_title="Multi-Agent AI Research System",
@@ -93,10 +94,6 @@ if st.button("Generate Report"):
 
     if query:
 
-        # =====================================
-        # AGENT DASHBOARD
-        # =====================================
-
         status_box.info("""
 🔍 Research Agent      → Running...
 
@@ -168,12 +165,30 @@ if st.button("Generate Report"):
             }
         )
 
+        # TXT DOWNLOAD
+
         st.download_button(
-            label="📥 Download Report",
+            label="📥 Download TXT Report",
             data=result["report"],
             file_name="research_report.txt",
             mime="text/plain"
         )
+
+        # PDF DOWNLOAD
+
+        pdf_file = create_pdf_report(
+            result["report"],
+            "research_report.pdf"
+        )
+
+        with open(pdf_file, "rb") as pdf:
+
+            st.download_button(
+                label="📄 Download PDF Report",
+                data=pdf,
+                file_name="research_report.pdf",
+                mime="application/pdf"
+            )
 
     else:
 
