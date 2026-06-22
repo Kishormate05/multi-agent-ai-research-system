@@ -23,8 +23,25 @@ def ask_pdf(question):
 
     context = ""
 
+    sources = []
+
     for doc in docs:
+
         context += doc.page_content + "\n\n"
+
+        source = doc.metadata.get(
+            "source",
+            "Unknown PDF"
+        )
+
+        page = doc.metadata.get(
+            "page",
+            "Unknown Page"
+        )
+
+        sources.append(
+            f"{source} (Page {page})"
+        )
 
     prompt = f"""
 You are an AI Research Assistant.
@@ -42,4 +59,14 @@ Provide a detailed answer.
 
     response = llm.invoke(prompt)
 
-    return response.content
+    source_text = "\n".join(
+        list(set(sources))
+    )
+
+    return f"""
+{response.content}
+
+Sources Used:
+
+{source_text}
+"""
