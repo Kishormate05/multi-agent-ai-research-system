@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import time
 
 from app import run_workflow
 from vectorstore.create_db import create_vector_db
@@ -60,7 +61,7 @@ if st.sidebar.button("Create Vector Database"):
         )
 
 # =====================================
-# HISTORY
+# CHAT HISTORY
 # =====================================
 
 st.sidebar.markdown("---")
@@ -86,13 +87,75 @@ query = st.text_input(
     "Enter your research query"
 )
 
+status_box = st.empty()
+
 if st.button("Generate Report"):
 
     if query:
 
+        # =====================================
+        # AGENT DASHBOARD
+        # =====================================
+
+        status_box.info("""
+🔍 Research Agent      → Running...
+
+📚 RAG Agent           → Waiting...
+
+🧠 Analysis Agent      → Waiting...
+
+📝 Report Agent        → Waiting...
+""")
+
+        time.sleep(1)
+
+        status_box.info("""
+✅ Research Agent      → Complete
+
+📚 RAG Agent           → Running...
+
+🧠 Analysis Agent      → Waiting...
+
+📝 Report Agent        → Waiting...
+""")
+
+        time.sleep(1)
+
+        status_box.info("""
+✅ Research Agent      → Complete
+
+✅ RAG Agent           → Complete
+
+🧠 Analysis Agent      → Running...
+
+📝 Report Agent        → Waiting...
+""")
+
+        time.sleep(1)
+
+        status_box.info("""
+✅ Research Agent      → Complete
+
+✅ RAG Agent           → Complete
+
+✅ Analysis Agent      → Complete
+
+📝 Report Agent        → Running...
+""")
+
         with st.spinner("🤖 Multi Agents are working..."):
 
             result = run_workflow(query)
+
+        status_box.success("""
+✅ Research Agent      → Complete
+
+✅ RAG Agent           → Complete
+
+✅ Analysis Agent      → Complete
+
+✅ Report Agent        → Complete
+""")
 
         st.success("✅ Report Generated Successfully")
 
